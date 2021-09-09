@@ -1,27 +1,68 @@
-import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
+import { XpLevel } from './ref/xp-level';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title: string = 'XP Between Calculator';
+  calcType: string;
+  xpForm: FormGroup;
 
-  xpForm = this.formBuilder.group({
-    currentXp: 0,
-    nextLevelXp: 0,
-    incrementXp: 0,
-    incrementTimeSeconds: 0,
-    remainingXp: 0,
-    remainingIncrements: 0,
-    remainingTimeMinutes: 0
-  });
+  // level input
+  currentLevel: number;
+  nextLevel: number;
+
+  // xp input
+  currentLevelXp: number;
+  nextLevelXp: number;
+
+  // common input
+  incrementXp: number;
+  incrementTimeSeconds: number;
+  
+  // common output
+  remainingXp: number;
+  remainingIncrements: number;
+  remainingTimeMinutes: number;
 
   constructor(
     private formBuilder: FormBuilder,
-  ) {}
+  ) {
+    this.xpForm = this.formBuilder.group({
+      calcType: this.calcType,
+      currentLevel: this.currentLevel,
+      nextLevel: this.nextLevel,
+      currentLevelXp: this.currentLevelXp,
+      nextLevelXp: this.nextLevelXp,
+      incrementXp: this.incrementXp,
+      incrementTimeSeconds: this.incrementTimeSeconds,
+      remainingXp: this.remainingXp,
+      remainingIncrements: this.remainingIncrements,
+      remainingTimeMinutes: this.remainingTimeMinutes
+    });
+  }
+
+  ngOnInit() {
+    Object.keys(this.xpForm.controls).forEach(
+      (controlName) => {
+        this.xpForm.get(controlName).valueChanges.subscribe(val => {
+          console.log(controlName);
+          this[controlName] = val;
+        });
+      }
+    );
+  }
+
+  setValue(controlName: string, value: any) {
+    this[controlName] = value;
+    this.xpForm.get(controlName).setValue(this[controlName]);
+
+    console.log('changed value (' + controlName + '): ' +  this.xpForm.get(controlName).value);
+  }
 
   onSubmit(): void {
     if (this.hasAllRequired()) {
@@ -30,18 +71,44 @@ export class AppComponent {
   }
 
   hasAllRequired(): boolean {
-    return this.xpForm.get('currentXp').value && this.xpForm.get('currentXp').value >= 0
-      && this.xpForm.get('nextLevelXp').value && this.xpForm.get('nextLevelXp').value > 0
-      && this.xpForm.get('incrementXp').value && this.xpForm.get('incrementXp').value > 0
-      && this.xpForm.get('incrementTimeSeconds').value && this.xpForm.get('incrementTimeSeconds').value > 0;
+    const conditionalCheck = this.calcType === 'level'
+      ? (
+        this.currentLevel && this.currentLevel >= 0
+        && this.nextLevel && this.nextLevel > 0
+      )
+      : (
+        this.currentLevelXp && this.currentLevelXp >= 0
+        && this.nextLevelXp && this.nextLevelXp > 0
+      )
+    return conditionalCheck
+      && this.incrementXp && this.incrementXp > 0
+      && this.incrementTimeSeconds && this.incrementTimeSeconds > 0;
   }
 
   calculateAll(): void {
-    this.xpForm.get('remainingXp').setValue(this.xpForm.get('nextLevelXp').value - this.xpForm.get('currentXp').value);
-    this.xpForm.get('remainingIncrements').setValue(this.xpForm.get('remainingXp').value / this.xpForm.get('incrementXp').value);
-    this.xpForm.get('remainingTimeMinutes').setValue(
-      this.roundNumber(
-        (this.xpForm.get('remainingIncrements').value * this.xpForm.get('incrementTimeSeconds').value) / 60)
+    if (this.calcType === 'level') {
+      this.calculateByLevel();
+    } else {
+      this.calculateByXp();
+    }
+  }
+
+  calculateByXp(): void {
+    this.setValue('remainingXp', this.nextLevelXp - this.currentLevelXp);
+    this.setValue('remainingIncrements', this.remainingXp / this.incrementXp);
+    this.setValue('remainingTimeMinutes', this.roundNumber(
+        (this.remainingIncrements * this.incrementTimeSeconds) / 60
+      )
+    );
+  }
+
+  calculateByLevel(): void {
+    const levelUtil = new XpLevel();
+    this.setValue('remainingXp', levelUtil.get(this.nextLevel).xp - levelUtil.get(this.currentLevel).xp);
+    this.setValue('remainingIncrements', this.remainingXp / this.incrementXp);
+    this.setValue('remainingTimeMinutes', this.roundNumber(
+        (this.remainingIncrements * this.incrementTimeSeconds) / 60
+      )
     );
   }
 
