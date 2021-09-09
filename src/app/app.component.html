@@ -1,3 +1,36 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container">
+  <h1>{{title}}</h1>
+  <form [formGroup]="xpForm" (ngSubmit)="onSubmit()" class="form-group">
+      <!-- Input section -->
+      <label for="currentXp">Current XP</label>
+      <input type="number" class="form-control" id="currentXp" required
+        formControlName="currentXp" name="id">
+
+      <label for="nextLevelXp">Next Level XP</label>
+      <input type="number" class="form-control" id="nextLevelXp" required
+          formControlName="nextLevelXp" name="id">
+
+      <label for="incrementXp">XP Increment (how much XP does the thing you're doing give per-action?)</label>
+      <input type="number" class="form-control" id="incrementXp" required
+          formControlName="incrementXp" name="id">
+
+      <label for="incrementTimeSeconds">Time Increment (how long (s) does the thing you're doing take per-action?)</label>
+      <input type="number" class="form-control" id="incrementTimeSeconds" required
+          formControlName="incrementTimeSeconds" name="id">
+
+      <!-- Output section -->
+      <label for="remainingXp">XP Remaining</label>
+      <input type="number" class="form-control" id="remainingXp" readonly
+        formControlName="remainingXp" name="id">
+
+      <label for="remainingIncrements">Increments Remaining</label>
+      <input type="number" class="form-control" id="remainingIncrements" readonly
+        formControlName="remainingIncrements" name="id">
+
+      <label for="remainingTimeMinutes">Time Remaining (m)</label>
+      <input type="number" class="form-control" id="remainingTimeMinutes" readonly
+        formControlName="remainingTimeMinutes" name="id">
+
+      <button class="button" type="submit">Calculate</button>
+  </form>
+</div>
