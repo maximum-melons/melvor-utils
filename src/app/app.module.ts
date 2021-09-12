@@ -4,10 +4,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { XPBetweenComponent } from './pages';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    XPBetweenComponent
   ],
   imports: [
     BrowserModule,
@@ -16,6 +18,9 @@ import { AppComponent } from './app.component';
     HttpModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent,
+    XPBetweenComponent
+  ]
 })
 export class AppModule { }

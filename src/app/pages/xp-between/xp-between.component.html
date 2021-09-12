@@ -1,0 +1,72 @@
+<div class="container">
+  <h1>{{title}}</h1>
+  <form [formGroup]="xpForm" (ngSubmit)="onSubmit()" class="form-group">
+    <label for="calcType">Calculate from:</label>
+
+    <div class="radio">
+      <input class="radio" type="radio" id="level" value="level"
+      formControlName="calcType" name="calcType"/>Level
+    </div>
+    <div class="radio">
+      <input type="radio" id="xp" value="xp"
+      formControlName="calcType" name="calcType"/>XP
+    </div>
+
+    <!-- Input section -->
+    <div *ngIf="!!calcType">
+      <div *ngIf="calcType == 'level'">
+        <label for="currentLevel">Current Level</label>
+        <input type="number" class="form-control" id="currentLevel" required
+          formControlName="currentLevel" name="currentLevel"/>
+
+        <label for="nextLevel">Target Level</label>
+        <input type="number" class="form-control" id="nextLevel" required
+            formControlName="nextLevel" name="nextLevel"/>
+      </div>
+      <div *ngIf="calcType == 'xp'">
+        <label for="currentLevelXp">Current XP</label>
+        <input type="number" class="form-control" id="currentLevelXp" required
+          formControlName="currentLevelXp" name="currentLevelXp"/>
+
+        <label for="nextLevelXp">Next Level XP</label>
+        <input type="number" class="form-control" id="nextLevelXp" required
+            formControlName="nextLevelXp" name="nextLevelXp"/>
+      </div>
+      <label for="incrementXp">XP Increment (how much XP does the thing you're doing give per-action?)</label>
+      <input type="number" class="form-control" id="incrementXp" required
+          formControlName="incrementXp" name="incrementXp"/>
+          
+      <label for="incrementTimeSeconds">Time Increment (how long (s) does the thing you're doing take per-action?)</label>
+      <input type="number" class="form-control" id="incrementTimeSeconds" required
+          formControlName="incrementTimeSeconds" name="incrementTimeSeconds"/>
+    </div>
+
+    <div>
+      <button type="submit">Calculate</button>
+    </div>
+
+    <!-- Output section -->
+    <h2>XP Remainders</h2>
+
+    <label for="remainingXp">XP Remaining</label>
+    <input type="number" class="form-control" id="remainingXp" readonly
+      formControlName="remainingXp" name="remainingXp"/>
+
+    <label for="remainingIncrements">Increments Remaining</label>
+    <input type="number" class="form-control" id="remainingIncrements" readonly
+      formControlName="remainingIncrements" name="remainingIncrements"/>
+
+    <h2>Time Remainders</h2>
+    <label for="splitRemainingTimeDays">Days</label>
+    <input type="number" class="form-control" id="splitRemainingTimeDays" readonly
+      value="{{ getDurationDays(remainingTimeSeconds).displayValue() }}" name="splitRemainingTimeDays"/>
+
+    <label for="splitRemainingTimeHours">Hours</label>
+    <input type="number" class="form-control" id="splitRemainingTimeHours" readonly
+      value="{{ getDurationHours(remainingTimeSeconds).displayValue() }}" name="splitRemainingTimeHours"/>
+
+    <label for="splitRemainingTimeMinutes">Minutes</label>
+    <input type="number" class="form-control" id="splitRemainingTimeMinutes" readonly
+      value="{{getDurationMinutes(remainingTimeSeconds).rawValue }}" name="splitRemainingTimeMinutes"/>
+  </form>
+</div>

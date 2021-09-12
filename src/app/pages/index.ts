@@ -1,0 +1,1 @@
+export { XPBetweenComponent } from './xp-between/xp-between.component';
